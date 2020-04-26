@@ -1,0 +1,33 @@
+version: "2"
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8000:80"
+      - "3000:443"
+    restart: always
+    volumes:
+      - "./etc/nginx/default.conf:/etc/nginx/conf.d/default.conf"
+      - "./app:/app"
+    depends_on:
+      - "php"
+      - "mongodb"
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./app:/app
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    restart: always
+    depends_on:
+      - "php"
+    volumes:
+      - ./data/db/mongo:/data/db
+    ports:
+      - "27020:27017"
